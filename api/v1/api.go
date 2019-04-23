@@ -263,6 +263,13 @@ func getClusterStatus(p *cluster.Peer) *clusterStatus {
 	}
 	return s
 }
+func (api *API) History(w http.ResponseWriter, r *http.Request){
+	dbAlerts, err := logdb.ListAlert("alertBucket")
+	if err != nil {
+		panic(err)
+	}
+	api.respond(w, dbAlerts)
+}
 func (api *API) AllAlerts(w http.ResponseWriter, r *http.Request){
 
 	var (
@@ -273,7 +280,6 @@ func (api *API) AllAlerts(w http.ResponseWriter, r *http.Request){
 		res      = []*Alert{}
 		matchers = []*labels.Matcher{}
 		alerts = []*types.Alert{}
-		//ctx      = r.Context()
 
 		showActive, showInhibited     bool
 		showSilenced, showUnprocessed bool
